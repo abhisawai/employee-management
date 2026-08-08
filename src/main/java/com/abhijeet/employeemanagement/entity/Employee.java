@@ -16,8 +16,11 @@ public class Employee {
     private String designation;
     private Double salary;
 
-    public Employee(Long id, String firstName, String lastName, String email, String department, String designation, Double salary) {
-            this.id = id;
+    public Employee() {
+
+    }
+
+    public Employee(String firstName, String lastName, String email, String department, String designation, Double salary) {
             this.firstName = firstName;
             this.lastName = lastName;
             this.email = email;
