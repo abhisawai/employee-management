@@ -1,6 +1,7 @@
 package com.abhijeet.employeemanagement.controller;
 
-import com.abhijeet.employeemanagement.entity.Employee;
+import com.abhijeet.employeemanagement.dto.EmployeeRequest;
+import com.abhijeet.employeemanagement.dto.EmployeeResponse;
 import com.abhijeet.employeemanagement.service.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,40 +14,45 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     public EmployeeController(EmployeeService employeeService) {
-        this.employeeService =employeeService;
+        this.employeeService = employeeService;
     }
 
-    //CREATE
+    // CREATE
     @PostMapping
-    public Employee createEmployee (@RequestBody Employee employee) {
-        return employeeService.createEmployee(employee);
+    public EmployeeResponse createEmployee(
+            @RequestBody EmployeeRequest request) {
+
+        return employeeService.createEmployee(request);
     }
 
-    //READ - all
+    // READ - all
     @GetMapping
-    public List<Employee> getAllEmployees() {
+    public List<EmployeeResponse> getAllEmployees() {
+
         return employeeService.getAllEmployees();
     }
 
-    //READ - by ID
+    // READ - by ID
     @GetMapping("/{id}")
-    public Employee getEmployeeById(@PathVariable Long id) {
+    public EmployeeResponse getEmployeeById(
+            @PathVariable Long id) {
+
         return employeeService.getEmployeeById(id);
     }
 
-    //UPDATE
+    // UPDATE
     @PutMapping("/{id}")
-    public Employee updateEmployee(
+    public EmployeeResponse updateEmployee(
             @PathVariable Long id,
-            @RequestBody Employee employee) {
+            @RequestBody EmployeeRequest request) {
 
-        return employeeService.updateEmployee(id, employee);
+        return employeeService.updateEmployee(id, request);
     }
 
     // DELETE
     @DeleteMapping("/{id}")
     public void deleteEmployee(@PathVariable Long id) {
+
         employeeService.deleteEmployee(id);
     }
-
 }
