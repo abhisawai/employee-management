@@ -1,64 +1,101 @@
 package com.abhijeet.employeemanagement.service;
 
+import com.abhijeet.employeemanagement.dto.EmployeeRequest;
+import com.abhijeet.employeemanagement.dto.EmployeeResponse;
 import com.abhijeet.employeemanagement.entity.Employee;
 import com.abhijeet.employeemanagement.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    public EmployeeService (EmployeeRepository employeeRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
 
-    //CREATE
-    public Employee createEmployee (Employee employee) {
-        return employeeRepository.save(employee);
+    // CREATE
+    public EmployeeResponse createEmployee(EmployeeRequest request) {
+
+        Employee employee = new Employee(
+                request.getFirstName(),
+                request.getLastName(),
+                request.getEmail(),
+                request.getDepartment(),
+                request.getDesignation(),
+                request.getSalary()
+        );
+
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        return mapToResponse(savedEmployee);
     }
 
-    //READ - all
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+    // READ - all
+    public List<EmployeeResponse> getAllEmployees() {
+
+        return employeeRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
-    //READ - by id
-    public Employee getEmployeeById (Long id) {
-        Optional<Employee> employee = employeeRepository.findById(id);
+    // READ - by ID
+    public EmployeeResponse getEmployeeById(Long id) {
 
-        if(employee.isPresent()) {
-            return employee.get();
-        }
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Employee not found with id: " + id)
+                );
 
-        throw new RuntimeException("Employee not found with id: " + id);
+        return mapToResponse(employee);
     }
 
-    //UPDATE
-    public Employee updateEmployee(Long id, Employee updatedEmployee) {
+    // UPDATE
+    public EmployeeResponse updateEmployee(Long id, EmployeeRequest request) {
 
-        Employee existingEmployee = getEmployeeById(id);
+        Employee existingEmployee = employeeRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Employee not found with id: " + id)
+                );
 
-        existingEmployee.setFirstName(updatedEmployee.getFirstName());
-        existingEmployee.setLastName(updatedEmployee.getLastName());
-        existingEmployee.setEmail(updatedEmployee.getEmail());
-        existingEmployee.setDepartment(updatedEmployee.getDepartment());
-        existingEmployee.setDesignation(updatedEmployee.getDesignation());
-        existingEmployee.setSalary(updatedEmployee.getSalary());
+        existingEmployee.setFirstName(request.getFirstName());
+        existingEmployee.setLastName(request.getLastName());
+        existingEmployee.setEmail(request.getEmail());
+        existingEmployee.setDepartment(request.getDepartment());
+        existingEmployee.setDesignation(request.getDesignation());
+        existingEmployee.setSalary(request.getSalary());
 
-        return employeeRepository.save(existingEmployee);
+        Employee updatedEmployee = employeeRepository.save(existingEmployee);
+
+        return mapToResponse(updatedEmployee);
     }
 
-    //DELETE
+    // DELETE
     public void deleteEmployee(Long id) {
 
-        Employee existingEmployee = getEmployeeById(id);
+        Employee existingEmployee = employeeRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Employee not found with id: " + id)
+                );
 
         employeeRepository.delete(existingEmployee);
-
     }
 
+    // Entity → Response DTO
+    private EmployeeResponse mapToResponse(Employee employee) {
+
+        return new EmployeeResponse(
+                employee.getId(),
+                employee.getFirstName(),
+                employee.getLastName(),
+                employee.getEmail(),
+                employee.getDepartment(),
+                employee.getDesignation(),
+                employee.getSalary()
+        );
+    }
 }
