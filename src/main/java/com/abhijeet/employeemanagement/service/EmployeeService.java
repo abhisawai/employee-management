@@ -5,6 +5,7 @@ import com.abhijeet.employeemanagement.dto.EmployeeResponse;
 import com.abhijeet.employeemanagement.entity.Employee;
 import com.abhijeet.employeemanagement.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
+import com.abhijeet.employeemanagement.exception.EmployeeNotFoundException;
 
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class EmployeeService {
 
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Employee not found with id: " + id)
+                        new EmployeeNotFoundException("Employee not found with id: " + id)
                 );
 
         return mapToResponse(employee);
@@ -59,7 +60,7 @@ public class EmployeeService {
 
         Employee existingEmployee = employeeRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Employee not found with id: " + id)
+                        new EmployeeNotFoundException("Employee not found with id: " + id)
                 );
 
         existingEmployee.setFirstName(request.getFirstName());
@@ -79,7 +80,7 @@ public class EmployeeService {
 
         Employee existingEmployee = employeeRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Employee not found with id: " + id)
+                        new EmployeeNotFoundException("Employee not found with id: " + id)
                 );
 
         employeeRepository.delete(existingEmployee);
