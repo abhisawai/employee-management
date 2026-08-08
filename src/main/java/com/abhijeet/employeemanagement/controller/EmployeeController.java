@@ -4,6 +4,7 @@ import com.abhijeet.employeemanagement.dto.EmployeeRequest;
 import com.abhijeet.employeemanagement.dto.EmployeeResponse;
 import com.abhijeet.employeemanagement.service.EmployeeService;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class EmployeeController {
     // CREATE
     @PostMapping
     public EmployeeResponse createEmployee(
-            @RequestBody EmployeeRequest request) {
+            @Valid @RequestBody EmployeeRequest request) {
 
         return employeeService.createEmployee(request);
     }
@@ -44,7 +45,7 @@ public class EmployeeController {
     @PutMapping("/{id}")
     public EmployeeResponse updateEmployee(
             @PathVariable Long id,
-            @RequestBody EmployeeRequest request) {
+            @Valid @RequestBody EmployeeRequest request) {
 
         return employeeService.updateEmployee(id, request);
     }
