@@ -2,11 +2,11 @@ package com.abhijeet.employeemanagement.controller;
 
 import com.abhijeet.employeemanagement.dto.EmployeeRequest;
 import com.abhijeet.employeemanagement.dto.EmployeeResponse;
+import com.abhijeet.employeemanagement.dto.PageResponse;
 import com.abhijeet.employeemanagement.service.EmployeeService;
-import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-
-import java.util.List;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -28,9 +28,9 @@ public class EmployeeController {
 
     // READ - all
     @GetMapping
-    public List<EmployeeResponse> getAllEmployees() {
+    public PageResponse<EmployeeResponse> getAllEmployees(Pageable pageable) {
 
-        return employeeService.getAllEmployees();
+        return employeeService.getAllEmployees(pageable);
     }
 
     // READ - by ID
