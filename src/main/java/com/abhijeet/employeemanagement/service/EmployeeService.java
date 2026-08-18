@@ -9,6 +9,8 @@ import com.abhijeet.employeemanagement.repository.EmployeeRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.abhijeet.employeemanagement.specification.EmployeeSpecification;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
@@ -39,9 +41,29 @@ public class EmployeeService {
     }
 
     // READ - all
-    public PageResponse<EmployeeResponse> getAllEmployees(Pageable pageable) {
+    public PageResponse<EmployeeResponse> getAllEmployees(
+            String department,
+            String designation,
+            Pageable pageable) {
 
-        Page<Employee> employees = employeeRepository.findAll(pageable);
+        Specification<Employee> specification = null;
+
+        if (department != null && !department.isBlank()) {
+            specification = EmployeeSpecification.hasDepartment(department);
+        }
+
+        if (designation != null && !designation.isBlank()) {
+
+            Specification<Employee> designationSpecification =
+                    EmployeeSpecification.hasDesignation(designation);
+
+            specification = specification == null
+                    ? designationSpecification
+                    : specification.and(designationSpecification);
+        }
+
+        Page<Employee> employees =
+                employeeRepository.findAll(specification, pageable);
 
         Page<EmployeeResponse> employeeResponses =
                 employees.map(this::mapToResponse);

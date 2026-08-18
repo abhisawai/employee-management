@@ -28,9 +28,16 @@ public class EmployeeController {
 
     // READ - all
     @GetMapping
-    public PageResponse<EmployeeResponse> getAllEmployees(Pageable pageable) {
+    public PageResponse<EmployeeResponse> getAllEmployees(
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String designation,
+            Pageable pageable) {
 
-        return employeeService.getAllEmployees(pageable);
+        return employeeService.getAllEmployees(
+                department,
+                designation,
+                pageable
+        );
     }
 
     // READ - by ID
