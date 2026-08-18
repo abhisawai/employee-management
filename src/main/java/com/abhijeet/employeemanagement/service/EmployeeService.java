@@ -2,10 +2,13 @@ package com.abhijeet.employeemanagement.service;
 
 import com.abhijeet.employeemanagement.dto.EmployeeRequest;
 import com.abhijeet.employeemanagement.dto.EmployeeResponse;
+import com.abhijeet.employeemanagement.dto.PageResponse;
 import com.abhijeet.employeemanagement.entity.Employee;
-import com.abhijeet.employeemanagement.repository.EmployeeRepository;
-import org.springframework.stereotype.Service;
 import com.abhijeet.employeemanagement.exception.EmployeeNotFoundException;
+import com.abhijeet.employeemanagement.repository.EmployeeRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -36,12 +39,20 @@ public class EmployeeService {
     }
 
     // READ - all
-    public List<EmployeeResponse> getAllEmployees() {
+    public PageResponse<EmployeeResponse> getAllEmployees(Pageable pageable) {
 
-        return employeeRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+        Page<Employee> employees = employeeRepository.findAll(pageable);
+
+        Page<EmployeeResponse> employeeResponses =
+                employees.map(this::mapToResponse);
+
+        return new PageResponse<>(
+                employeeResponses.getContent(),
+                employeeResponses.getNumber(),
+                employeeResponses.getSize(),
+                employeeResponses.getTotalElements(),
+                employeeResponses.getTotalPages()
+        );
     }
 
     // READ - by ID
